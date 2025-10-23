@@ -4,6 +4,10 @@ pragma solidity ^0.8.23;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
+interface ILibraryMembership {
+    function balanceOf(address owner) external view returns (uint256);
+}
+
 /**
  * @title LibraryCatalog
  * @notice Basic on-chain catalog to register library books and their metadata.
@@ -30,6 +34,7 @@ contract LibraryCatalog is ERC1155 {
     uint256 public depositAmount = 0.01 ether;
     mapping(address => mapping(uint256 => uint256)) private _loanDueDates;
     mapping(address => mapping(uint256 => uint256)) private _loanDeposits;
+    ILibraryMembership public membershipContract;
 
     error NotOwner(address caller);
     error InvalidNewOwner(address newOwner);
@@ -44,6 +49,8 @@ contract LibraryCatalog is ERC1155 {
     error InvalidBranch(address branch);
     error InvalidLoanDuration(uint256 duration);
     error InvalidDepositAmount(uint256 amount);
+    error MembershipContractNotSet();
+    error InvalidMembershipContract(address membership);
 
     modifier onlyOwner() {
         if (msg.sender != _owner) {
@@ -144,11 +151,24 @@ contract LibraryCatalog is ERC1155 {
         depositAmount = newDepositAmount;
     }
 
+    function setMembershipContract(address membership) external onlyOwner {
+        if (membership == address(0)) {
+            revert InvalidMembershipContract(membership);
+        }
+        membershipContract = ILibraryMembership(membership);
+    }
+
     function isMember(address account) public view virtual returns (bool) {
-        return account == _owner;
+        if (address(membershipContract) == address(0)) {
+            return false;
+        }
+        return membershipContract.balanceOf(account) > 0;
     }
 
     function borrowBook(uint256 bookId) external payable {
+        if (address(membershipContract) == address(0)) {
+            revert MembershipContractNotSet();
+        }
         if (!isMember(msg.sender)) {
             revert MembershipRequired(msg.sender);
         }
