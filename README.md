@@ -69,13 +69,6 @@ pnpm test
 - **Physical circulation**: NFC/QR tag ties the item to its on-chain `Copy ID`; scanning mints and settles loans at checkout and return.
 - **Depositless mode**: Integrate reputation scores to limit borrowing instead of using deposits.
 
-## Roadmap highlights
-- Expand metadata model for multi-format works and curator rewards.
-- Build acquisition proposal & grant contracts with budget rules.
-- Introduce reputation system and privacy-preserving borrower attestations.
-- Ship steward dashboards, indexers, and SDKs for branch operators.
-- See `roadmap.md` for detailed milestones and status.
-
 ## Contributing
 1. Fork the repository and create a feature branch (`feature/add-loan-ext`).
 2. Write tests for your changes (integration + edge cases).
@@ -85,4 +78,4 @@ pnpm test
 We welcome protocol design feedback, governance playbooks, and tooling contributions. Reach out via issues or community channels to coordinate work.
 
 ## License
-OLP is released under the MIT License. See `LICENSE` for details.
+OLP is released under the GNU GPL 3.0 License. See `LICENSE` for details.
