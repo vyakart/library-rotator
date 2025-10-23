@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+
 /**
  * @title LibraryCatalog
  * @notice Basic on-chain catalog to register library books and their metadata.
  * @dev Provides minimal Ownable-style access control for administrative actions.
  */
-contract LibraryCatalog {
+contract LibraryCatalog is ERC1155 {
     struct Book {
         string title;
         string author;
@@ -24,6 +26,7 @@ contract LibraryCatalog {
     error NotOwner(address caller);
     error InvalidNewOwner(address newOwner);
     error BookNotFound(uint256 bookId);
+    error InvalidMintAmount(uint256 amount);
 
     modifier onlyOwner() {
         if (msg.sender != _owner) {
@@ -32,7 +35,7 @@ contract LibraryCatalog {
         _;
     }
 
-    constructor() {
+    constructor(string memory baseURI) ERC1155(baseURI) {
         _owner = msg.sender;
         emit OwnershipTransferred(address(0), msg.sender);
     }
@@ -90,5 +93,15 @@ contract LibraryCatalog {
     function totalBooks() external view returns (uint256) {
         return _nextBookId - 1;
     }
-}
 
+    function mintCopies(address to, uint256 bookId, uint256 amount) external onlyOwner {
+        if (bookId == 0 || bookId >= _nextBookId) {
+            revert BookNotFound(bookId);
+        }
+        if (amount == 0) {
+            revert InvalidMintAmount(amount);
+        }
+
+        _mint(to, bookId, amount, "");
+    }
+}
