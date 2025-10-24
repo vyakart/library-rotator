@@ -37,22 +37,14 @@ OLP is designed as a public library you can fork. It provides verifiable records
 3. **Stewardship**: Branch owner configures loan duration, deposit amount, and membership contract; only stewards can add books or mint copies.
 
 ## Getting started
-Option A: Foundry (recommended for contracts)
-
-```bash
-forge --version             # ensure Foundry is installed
-forge install OpenZeppelin/openzeppelin-contracts
-forge test -vv
-```
-
-Option B: Hardhat (WIP)
+Install dependencies and run tests locally.
 
 ```bash
 pnpm install
 pnpm test
 ```
 
-> Tooling assumptions: Foundry for Solidity tests with OZ remapping. Hardhat support can be added if preferred.
+> Tooling assumptions: Hardhat (or Foundry) for compilation/tests, OpenZeppelin contracts installed via npm/pnpm. Adjust commands if you use a different stack.
 
 ### Local development checklist
 - Configure `.env` with RPC URLs and deployer keys before deploying.
